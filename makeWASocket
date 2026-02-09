@@ -1,0 +1,11 @@
+const sock = makeWASocket({
+    version,
+    auth: state,
+    logger: pino({ level: 'silent' }),
+    printQRInTerminal: false,
+    mobile: false, // تأكد أنها false لاستخدام الكود
+    keepAliveIntervalMs: 30000, // إرسال نبضات للخادم كل 30 ثانية
+    defaultQueryTimeoutMs: undefined, // عدم قطع الاتصال عند التأخير
+    connectTimeoutMs: 60000, // زيادة وقت الانتظار للاتصال
+    browser: ["Ubuntu", "Chrome", "20.0.04"]
+});
