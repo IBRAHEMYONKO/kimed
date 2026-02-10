@@ -31,7 +31,7 @@ export default {
 
         // تنسيق الرسالة النهائية: نص الشخص + توقيع البوت
         const finalMessage = `${textToEcho}\n\n` +
-                             `⚡ _منشن مخفي بواسطة: ${m.pushName || 'الآدمن'}_`;
+
 
         // إرسال المنشن المخفي
         await sock.sendMessage(jid, {
