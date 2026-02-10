@@ -36,18 +36,7 @@ async function startBot() {
         browser: ["Ubuntu", "Chrome", "20.0.04"] // [تعديل] ضروري لعمل الكود
     });
 
-    // 📌 دمج الصورة مع أي رد نصي من البلغنات
-const originalSendMessage = sock.sendMessage.bind(sock);
-
-sock.sendMessage = async (jid, content, options = {}) => {
-    if (content?.text && fs.existsSync(universeImage)) {
-        content = {
-            image: fs.readFileSync(universeImage),
-            caption: content.text
-        };
-    }
-    return originalSendMessage(jid, content, options);
-};
+    
     // ==========================================
     // [إضافة] منطق طلب كود الربط (Pairing Code)
     // ==========================================
