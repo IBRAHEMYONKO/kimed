@@ -36,7 +36,6 @@ export default {
 
         mentionText += `✦ *قائمة الحضور الملكي:*\n\n`;
         
-        // التعديل هنا: إضافة المنشن بشكل صحيح في النص
         for (let mem of participants) {
             mentionText += `| @${mem.id.split('@')[0]}\n`;
         }
@@ -46,16 +45,23 @@ export default {
         mentionText += `┃   Founder : ${ownerName}\n`;
         mentionText += `╰━━━━━━━━━━━━━━━━━━━━╯`;
 
+        // الإرسال مع ضمان تفعيل خاصية المنشن عبر contextInfo
         if (fs.existsSync(imagePath)) {
             await sock.sendMessage(from, {
                 image: fs.readFileSync(imagePath),
                 caption: mentionText,
-                mentions: allParticipants // هذه تعلم الواتساب أن الأرقام المذكورة هي منشن
+                mentions: allParticipants,
+                contextInfo: { 
+                    mentionedJid: allParticipants, // تكرار المنشن هنا يضمن التنبيه في بعض النسخ
+                    forwardingScore: 999,
+                    isForwarded: true 
+                }
             }, { quoted: m });
         } else {
             await sock.sendMessage(from, {
                 text: mentionText,
-                mentions: allParticipants
+                mentions: allParticipants,
+                contextInfo: { mentionedJid: allParticipants }
             }, { quoted: m });
         }
     }
