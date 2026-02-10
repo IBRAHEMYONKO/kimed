@@ -1,42 +1,39 @@
 export default {
     name: "مخفي",
-    category: "أمن_سيبراني",
+    category: "الإدارة",
     async execute(sock, m) {
         const jid = m.key.remoteJid;
         if (!jid.endsWith('@g.us')) return;
 
-        // التحقق مما إذا كان المستخدم قد قام بالرد على رسالة أم لا
+        // 1. استخراج الرسالة المقتبسة (التي رددت عليها)
         const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
         
-        // الحصول على نص الرسالة (سواء كانت رسالة عادية أو رد على رسالة)
         let textToEcho = "";
         if (quoted) {
-            // استخراج النص من الرسالة المقتبسة (التي رددت عليها)
             textToEcho = quoted.conversation || 
                          quoted.extendedTextMessage?.text || 
                          quoted.imageMessage?.caption || 
                          "";
         }
 
-        // إذا لم يرد على رسالة أو كانت الرسالة المردود عليها فارغة
+        // 2. التحقق من وجود نص للارسال
         if (!quoted || textToEcho === "") {
             return sock.sendMessage(jid, { 
-                text: "❌ يرجى الرد على الرسالة التي تريد نشرها بمنشن مخفي." 
+                text: "❌ يرجى الرد على رسالة نصية لتنفيذ المنشن المخفي." 
             }, { quoted: m });
         }
 
-        // جلب قائمة الأعضاء للمنشن المخفي
+        // 3. جلب قائمة الأرقام (IDs) لجميع الأعضاء
         const group = await sock.groupMetadata(jid);
         const participants = group.participants.map(p => p.id);
 
-        // تنسيق الرسالة النهائية: نص الشخص + توقيع البوت
-        const finalMessage = `${textToEcho}\n\n` +
-
-
-        // إرسال المنشن المخفي
+        // 4. إرسال الرسالة كنص صافي مع المنشن الحقيقي
         await sock.sendMessage(jid, {
-            text: finalMessage,
-            mentions: participants 
-        }); // حذفنا { quoted: m } هنا لكي تظهر كرسالة جديدة تماماً، يمكنك إضافتها إذا أردت
+            text: textToEcho, // يرسل النص المقتبس فقط بدون أي زيادة
+            mentions: participants, // هذا هو الجزء المسؤول عن المنشن الحقيقي (التنبيه)
+            contextInfo: {
+                mentionedJid: participants // تأكيد المنشن في بيانات الرسالة لضمان وصول التنبيه
+            }
+        });
     }
 };
