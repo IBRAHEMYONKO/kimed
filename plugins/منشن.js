@@ -23,7 +23,7 @@ export default {
 
         // ✨ التصميم الملكي
         let mentionText = `╭━━━〔 👑  مملكة يونيفرس  〕━━━╮\n`;
-        mentionText += `┃         *UNIVERSE KINGDOM CALL*         ┃\n`;
+        mentionText += `┃         *UNIVERSE KINGDOM CALL* ┃\n`;
         mentionText += `╰━━━━━━━━━━━━━━━━━━━━╯\n\n`;
 
         mentionText += `📜 *الرسالة الرسمية:*\n`;
@@ -34,12 +34,14 @@ export default {
         mentionText += `┃ 🗣️ المنادي : ${m.pushName || 'Admin'}\n`;
         mentionText += `┗━━━━━━━━━━━━━━━━━━━┛\n\n`;
 
-        mentionText += `✦ *قائمة الحضور الملكي:*\n`;
+        mentionText += `✦ *قائمة الحضور الملكي:*\n\n`;
+        
+        // التعديل هنا: إضافة المنشن بشكل صحيح في النص
         for (let mem of participants) {
-            mentionText += ` @${mem.id.split('@')[0]}`;
+            mentionText += `| @${mem.id.split('@')[0]}\n`;
         }
 
-        mentionText += `\n\n╭━━━〔 🛡️ حقوق النشر 〕━━━╮\n`;
+        mentionText += `\n╭━━━〔 🛡️ حقوق النشر 〕━━━╮\n`;
         mentionText += `┃   Powered By 👑 مملكة يونيفرس\n`;
         mentionText += `┃   Founder : ${ownerName}\n`;
         mentionText += `╰━━━━━━━━━━━━━━━━━━━━╯`;
@@ -48,7 +50,7 @@ export default {
             await sock.sendMessage(from, {
                 image: fs.readFileSync(imagePath),
                 caption: mentionText,
-                mentions: allParticipants
+                mentions: allParticipants // هذه تعلم الواتساب أن الأرقام المذكورة هي منشن
             }, { quoted: m });
         } else {
             await sock.sendMessage(from, {
