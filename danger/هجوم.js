@@ -2,8 +2,8 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 export default {
-    name: "فحص",
-    category: "أمن_سيبراني",
+    name: "هجوم",
+    
     async execute(sock, m, args) {
         const targetUrl = args[0];
         if (!targetUrl || !targetUrl.includes("facebook.com")) {
