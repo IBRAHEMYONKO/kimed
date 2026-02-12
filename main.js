@@ -127,7 +127,7 @@ async function startBot() {
         }
 
         // 🔥 تفاعل تلقائي مع اسماء القائد
-const triggerWords = ["كيم", "دوكجا", "دوكا", "مايكي", "كيم دوكجا"];
+const triggerWords = ["كيم", "دوكجا", "دوكا", "ناروتو", "كيم دوكجا"];
 
 if (text && triggerWords.some(w => text.includes(w))) {
     await sock.sendMessage(from, {
